@@ -9,11 +9,11 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-Explain how your project works
+Using Spi to feed into PWM to produce output
 
 ## How to test
 
-Explain how to use your project
+we learn that later twin
 
 ## External hardware
 
