@@ -3,11 +3,11 @@
 module spi (
   input [2:0] ui_in,
   input clk, rst_n,
-  output [7:0] en_reg_out_7_0,
-  output [15:8] en_reg_out_15_8,
-  output [7:0] en_reg_pwm_7_0,
-  output [15:8] en_reg_pwm_15_8,
-  output [7:0] pwm_duty_cycle
+  output reg [7:0] en_reg_out_7_0,
+  output reg [15:8] en_reg_out_15_8,
+  output reg [7:0] en_reg_pwm_7_0,
+  output reg [15:8] en_reg_pwm_15_8,
+  output reg [7:0] pwm_duty_cycle
 );
 
 //data is ui_in[1], chip select is ui_in[2], sclk is ui_in[0]
