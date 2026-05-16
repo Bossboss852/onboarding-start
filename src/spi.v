@@ -20,7 +20,6 @@ reg [3:0] next;
 reg [3:0] counter;
 reg [6:0] address;
 reg [7:0] data;
-reg write;
 always @(*) begin
     if (~ncsstore[1]) begin
       if (state == IDLE) begin
@@ -49,6 +48,8 @@ always @(*) begin
         end else begin
           next = IGNORE;
         end
+      end else begin
+        next = MODE;
       end
     end else begin
       next = IDLE;
