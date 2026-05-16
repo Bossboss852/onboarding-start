@@ -14,7 +14,6 @@ module spi (
 reg [2:0] clockstore;
 reg [1:0] copistore;
 reg [1:0] ncsstore;
-localparam maxadress = 4;
 parameter IDLE=0, ADDRESS = 1, BITINGEST = 2, IGNORE = 3, MODE = 4;
 reg [3:0] state;
 reg [3:0] next;
