@@ -60,7 +60,6 @@ always @(posedge clk or negedge rst_n) begin
   if (~rst_n) begin
     counter <= '0;
     state <= IDLE;
-    en_reg
     en_reg_out_7_0 <= '0;
     en_reg_out_15_8 <= '0;
     en_reg_pwm_7_0 <= '0;
@@ -86,13 +85,13 @@ always @(posedge clk or negedge rst_n) begin
         if (counter == 15) begin
           if (address == 0x00) begin
             en_reg_out_7_0 <= {data[6:0],copistore[1]};
-          end else if (address = 0x01) begin
+          end else if (address == 0x01) begin
             en_reg_out_15_8 <= {data[6:0],copistore[1]};
-          end else if (address = 0x02) begin
+          end else if (address == 0x02) begin
             en_reg_pwm_7_0 <= {data[6:0],copistore[1]};
-          end else if (address = 0x03) begin
+          end else if (address == 0x03) begin
             en_reg_pwm_15_8 <= {data[6:0],copistore[1]};
-          end else if (address = 0x04) begin
+          end else if (address == 0x04) begin
             pwm_duty_cycle <= {data[6:0],copistore[1]};
           end
         end
