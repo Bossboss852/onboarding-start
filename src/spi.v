@@ -56,13 +56,18 @@ end
 
 always @(posedge clk or negedge rst_n) begin
   if (~rst_n) begin
-    counter <= '0;
-    state <= IDLE;
-    en_reg_out_7_0 <= '0;
-    en_reg_out_15_8 <= '0;
-    en_reg_pwm_7_0 <= '0;
-    en_reg_pwm_15_8 <= '0;
-    pwm_duty_cycle <= '0;
+    counter         <= 4'd0;
+    state           <= IDLE;
+    clockstore      <= 3'd0;
+    copistore       <= 3'd0;
+    ncsstore        <= 2'd0;
+    address         <= 7'd0;
+    data            <= 8'd0;
+    en_reg_out_7_0  <= 8'd0;
+    en_reg_out_15_8 <= 8'd0;
+    en_reg_pwm_7_0  <= 8'd0;
+    en_reg_pwm_15_8 <= 8'd0;
+    pwm_duty_cycle  <= 8'd0;
   end else begin
     clockstore <= {clockstore[1:0], ui_in[0]};
     // the current sysclock is clockstore[1], last clock cycle is clockstore[2]
@@ -80,20 +85,22 @@ always @(posedge clk or negedge rst_n) begin
         data[(14-counter)] <= copistore[1];
         if (counter == 14) begin
           if (address == 0) begin
-            en_reg_out_7_0 <= {data[7:1],copistore[2]};
+            en_reg_out_7_0 <= {data[7:1],copistore[1]};
           end else if (address == 1) begin
-            en_reg_out_15_8 <= {data[7:1],copistore[2]};
+            en_reg_out_15_8 <= {data[7:1],copistore[1]};
           end else if (address == 2) begin
-            en_reg_pwm_7_0 <= {data[7:1],copistore[2]};
+            en_reg_pwm_7_0 <= {data[7:1],copistore[1]};
           end else if (address == 3) begin
-            en_reg_pwm_15_8 <= {data[7:1],copistore[2]};
+            en_reg_pwm_15_8 <= {data[7:1],copistore[1]};
           end else if (address == 4) begin
-            pwm_duty_cycle <= {data[7:1],copistore[2]};
+            pwm_duty_cycle <= {data[7:1],copistore[1]};
           end
           counter <= 0;
         end
       end else if (state == IDLE) begin
-        counter <= 0;
+        counter <= 4'd0;
+      end else if ((state == IGNORE) & (counter == 14)) begin
+        counter <= 4'd0;
       end
     end
   end
