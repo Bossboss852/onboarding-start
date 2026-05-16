@@ -92,6 +92,8 @@ always @(posedge clk or negedge rst_n) begin
           end
           counter <= 0;
         end
+      end else if (state == IDLE) begin
+        counter <= 0;
       end
     end
   end
