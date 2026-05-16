@@ -76,10 +76,7 @@ always @(posedge clk or negedge rst_n) begin
       if ((state == ADDRESS)|(state == BITINGEST)|(state == IGNORE)) begin
         counter <= counter + 1;
       end
-      if (state == MODE) begin
-        address[counter] <= copistore[1];
-        // THIS IS NOT REAL VERILOG THIS IS SO THERE IS NO MORE ERRORS
-      end else if (state == ADDRESS) begin
+      if (state == ADDRESS) begin
         address[counter] <= copistore[1];
       end else if (state == BITINGEST) begin
         data[(counter-7)] <= copistore[1];
