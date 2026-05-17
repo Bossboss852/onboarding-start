@@ -188,14 +188,16 @@ async def high_edge (uo_out):
 
     while True:
         await Edge(uo_out)
-        if (uo_out.value):
+        holder = uo_out.value
+        if holder[0] == 1:
             return
         
 
 async def low_edge (uo_out):
     while True:
         await Edge(uo_out)
-        if ~(uo_out.value):
+        holder = uo_out.value
+        if holder[0] == 0:
             return
 
 @cocotb.test()
