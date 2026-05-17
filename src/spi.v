@@ -12,7 +12,7 @@ module spi (
 
 //data is ui_in[1], chip select is ui_in[2], sclk is ui_in[0]
 reg [2:0] clockstore;
-reg [2:0] copistore;
+reg [1:0] copistore;
 reg [1:0] ncsstore;
 parameter IDLE = 4'd0, BITINGEST = 4'd2, IGNORE = 4'd3, LAST = 4'd4;
 reg [3:0] state;
