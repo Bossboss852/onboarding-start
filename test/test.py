@@ -8,7 +8,7 @@ from cocotb.triggers import ClockCycles
 from cocotb.types import Logic
 from cocotb.types import LogicArray
 from cocotb.utils import get_sim_time
-from cocotb.triggers import Edge
+from cocotb.triggers import ValueChange
 from cocotb.triggers import Timer
 
 async def await_half_sclk(dut):
@@ -177,28 +177,30 @@ async def test_pwm_freq(dut):
     await send_spi_transaction(dut, 1, 0x02, 0xFF)
     dut._log.info("awaiting values")
     await high_edge(dut.uo_out)
-    timer1 = get_sim_time('sec')
+    timer1 = get_sim_time(units = 'sec')
     await high_edge(dut.uo_out)
-    timer2 = get_sim_time('sec')
+    timer2 = get_sim_time(units = 'sec')
     dut._log.info("Finishing Calculations")
     assert ((1/(timer2-timer1))>=2970) and ((1/(timer2-timer1))<=3030), f"Expected to be within range of 2970-3030, got {(timer2-timer1)}"
     dut._log.info("PWM Frequency test completed successfully")
 
-async def high_edge (uo_out):
-
+async def high_edge(uo_out):
     while True:
-        await Edge(uo_out)
-        holder = uo_out.value
-        if holder[0] == 1:
-            return
-        
+        await ValueChange(uo_out)  # also fixes the ValueChange deprecation
+        try:
+            if int(uo_out.value) > 0:
+                return
+        except ValueError:
+            pass
 
-async def low_edge (uo_out):
+async def low_edge(uo_out):
     while True:
-        await Edge(uo_out)
-        holder = uo_out.value
-        if holder[0] == 0:
-            return
+        await ValueChange(uo_out)
+        try:
+            if int(uo_out.value) == 0:
+                return
+        except ValueError:
+            pass
 
 @cocotb.test()
 async def test_pwm_duty(dut):
@@ -224,38 +226,38 @@ async def test_pwm_duty(dut):
     ui_in_val = await send_spi_transaction(dut, 1, 0x00, 0xFF)
     await send_spi_transaction(dut, 1, 0x02, 0xFF)
     await Timer(0.333,'ms')
-    assert dut.uo_out.value, f"Expected to be high, was instead {dut.uo_out.value}"
+    assert int(dut.uo_out.value) == 0xFF, f"Expected to be high, was instead {dut.uo_out.value}"
     await Timer(0.333,'ms')
-    assert dut.uo_out.value, f"Expected to be high, was instead {dut.uo_out.value}"
+    assert int(dut.uo_out.value) == 0xFF, f"Expected to be high, was instead {dut.uo_out.value}"
     await Timer(0.333,'ms')
-    assert dut.uo_out.value, f"Expected to be high, was instead {dut.uo_out.value}"
+    assert int(dut.uo_out.value) == 0xFF, f"Expected to be high, was instead {dut.uo_out.value}"
     await Timer(0.333,'ms')
-    assert dut.uo_out.value, f"Expected to be high, was instead {dut.uo_out.value}"
+    assert int(dut.uo_out.value) == 0xFF, f"Expected to be high, was instead {dut.uo_out.value}"
     await Timer(0.333,'ms')
-    assert dut.uo_out.value, f"Expected to be high, was instead {dut.uo_out.value}"
+    assert int(dut.uo_out.value) == 0xFF, f"Expected to be high, was instead {dut.uo_out.value}"
     await ClockCycles(dut.clk, 15000)
     await send_spi_transaction(dut,1,0x04, 0x7F)
     await high_edge(dut.uo_out)
-    timer1 = get_sim_time('ms')
+    timer1 = get_sim_time(units ='ms')
     await low_edge(dut.uo_out)
-    timer2 = get_sim_time('ms')
+    timer2 = get_sim_time(units ='ms')
     await high_edge(dut.uo_out)
-    timer3 = get_sim_time('ms')
+    timer3 = get_sim_time(units = 'ms')
     period = timer3-timer1
     high_time = timer2-timer1
     Modulation = high_time/period
     assert (Modulation >= 0.45) and (Modulation <= 0.55), f"Failed to be within 50% bounds, was instead {Modulation}"
     await ClockCycles(dut.clk,15000)
     await send_spi_transaction(dut, 1, 0x04, 0x00)
-    assert ~dut.uo_out.value, f"Expected to be low was instead {dut.uo_out.value}"
+    assert int(dut.uo_out.value) == 0x00, f"Expected to be low, was instead {dut.uo_out.value}"
     await Timer(0.333, 'ms')
-    assert ~dut.uo_out.value, f"Expected to be low was instead {dut.uo_out.value}"
+    assert int(dut.uo_out.value) == 0x00, f"Expected to be low, was instead {dut.uo_out.value}"
     await Timer(0.333, 'ms')
-    assert ~dut.uo_out.value, f"Expected to be low was instead {dut.uo_out.value}"
+    assert int(dut.uo_out.value) == 0x00, f"Expected to be low, was instead {dut.uo_out.value}"
     await Timer(0.333, 'ms')
-    assert ~dut.uo_out.value, f"Expected to be low was instead {dut.uo_out.value}"
+    assert int(dut.uo_out.value) == 0x00, f"Expected to be low, was instead {dut.uo_out.value}"
     await Timer(0.333, 'ms')
-    assert ~dut.uo_out.value, f"Expected to be low was instead {dut.uo_out.value}"
+    assert int(dut.uo_out.value) == 0x00, f"Expected to be low, was instead {dut.uo_out.value}"
     await Timer(0.333, 'ms')
 
     dut._log.info("PWM Duty Cycle test completed successfully")
