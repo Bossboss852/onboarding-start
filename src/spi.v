@@ -54,7 +54,7 @@ always @(posedge clk or negedge rst_n) begin
     counter <= 4'd0;
     state <= IDLE;
     clockstore <= 3'd0;
-    copistore <= 3'd0;
+    copistore <= 2'd0;
     ncsstore <= 2'd0;
     ingested <= 15'd0;
     en_reg_out_7_0 <= 8'd0;
@@ -65,7 +65,7 @@ always @(posedge clk or negedge rst_n) begin
   end else begin
     clockstore <= {clockstore[1:0], ui_in[0]};
     // the current sysclock is clockstore[1], last clock cycle is clockstore[2]
-    copistore <= {copistore[1:0], ui_in[1]};
+    copistore <= {copistore[0], ui_in[1]};
     ncsstore <= {ncsstore[0], ui_in[2]};
     // current cycle is any[1]
     if (clockstore[1]&~clockstore[2]) begin
