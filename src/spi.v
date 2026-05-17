@@ -14,7 +14,7 @@ module spi (
 reg [2:0] clockstore;
 reg [2:0] copistore;
 reg [1:0] ncsstore;
-parameter IDLE=0, ADDRESS = 1, BITINGEST = 2, IGNORE = 3;
+parameter IDLE = 4'd0, ADDRESS = 4'd1, BITINGEST = 4'd2, IGNORE = 4'd3, LAST = 4'd4;
 reg [3:0] state;
 reg [3:0] next;
 reg [3:0] counter;
@@ -29,23 +29,25 @@ always @(*) begin
           next = IGNORE;
         end
       end else if (state == ADDRESS) begin
-        if (counter == 6) begin
+        if (counter == 4'd6) begin
           next = BITINGEST;
         end else begin
           next = ADDRESS;
         end
       end else if (state == BITINGEST) begin
-        if (counter == 14) begin
-          next = IDLE;
+        if (counter == 4'd14) begin
+          next = LAST;
         end else begin
           next = BITINGEST;
         end
       end else if (state == IGNORE) begin
-        if(counter == 14) begin
+        if(counter == 4'd14) begin
           next = IDLE;
         end else begin
           next = IGNORE;
         end
+      end else if (state == LAST) begin
+        next = IDLE;
       end else begin
         next = IDLE;
       end
@@ -77,31 +79,32 @@ always @(posedge clk or negedge rst_n) begin
     if (clockstore[1]&~clockstore[2]) begin
       state <= next;
       if ((state == ADDRESS)|(state == BITINGEST)|(state == IGNORE)) begin
-        counter <= counter + 1;
+        counter <= counter + 4'd1;
       end
       if (state == ADDRESS) begin
         address[6-counter] <= copistore[1];
       end else if (state == BITINGEST) begin
-        data[(14-counter)] <= copistore[1];
-        if (counter == 14) begin
-          if (address == 0) begin
-            en_reg_out_7_0 <= {data[7:1],copistore[1]};
-          end else if (address == 1) begin
-            en_reg_out_15_8 <= {data[7:1],copistore[1]};
-          end else if (address == 2) begin
-            en_reg_pwm_7_0 <= {data[7:1],copistore[1]};
-          end else if (address == 3) begin
-            en_reg_pwm_15_8 <= {data[7:1],copistore[1]};
-          end else if (address == 4) begin
-            pwm_duty_cycle <= {data[7:1],copistore[1]};
-          end
-          counter <= 0;
-        end
+        data <= {data[6:0], copistore[1]};
       end else if (state == IDLE) begin
         counter <= 4'd0;
-      end else if ((state == IGNORE) & (counter == 14)) begin
+      end else if ((state == IGNORE) & (counter == 4'd14)) begin
         counter <= 4'd0;
       end
+    end
+    if (state == LAST) begin
+        if (address == 7'd0) begin
+            en_reg_out_7_0 <= data;
+          end else if (address == 7'd1) begin
+            en_reg_out_15_8 <= data;
+          end else if (address == 7'd2) begin
+            en_reg_pwm_7_0 <= data;
+          end else if (address == 7'd3) begin
+            en_reg_pwm_15_8 <= data;
+          end else if (address == 7'd4) begin
+            pwm_duty_cycle <= data;
+          end
+          counter <= 4'd0;
+          state <= IDLE;
     end
   end
 end
