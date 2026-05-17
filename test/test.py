@@ -7,7 +7,7 @@ from cocotb.triggers import RisingEdge
 from cocotb.triggers import ClockCycles
 from cocotb.types import Logic
 from cocotb.types import LogicArray
-from cocotb.simtime import get_sim_time
+from cocotb.utils import get_sim_time
 from cocotb.triggers import ValueChange
 from cocotb.triggers import Timer
 
