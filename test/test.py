@@ -186,7 +186,8 @@ async def test_pwm_freq(dut):
 
 async def high_edge(uo_out):
     while True:
-        await ValueChange(uo_out)  # also fixes the ValueChange deprecation
+        await ValueChange(uo_out)
+        await Timer(10, 'ns')
         try:
             if int(uo_out.value) > 0:
                 return
@@ -196,6 +197,7 @@ async def high_edge(uo_out):
 async def low_edge(uo_out):
     while True:
         await ValueChange(uo_out)
+        await Timer(10, 'ns')
         try:
             if int(uo_out.value) == 0:
                 return
