@@ -156,7 +156,7 @@ async def test_spi(dut):
 async def test_pwm_freq(dut):
 
     # Set the clock period to 100 ns (10 MHz)
-    clock = Clock(dut.clk, 100, unit="ns")
+    clock = Clock(dut.clk, 100, units="ns")
     cocotb.start_soon(clock.start())
 
     # Reset
@@ -202,7 +202,7 @@ async def low_edge (uo_out):
 async def test_pwm_duty(dut):
     
     # Set the clock period to 100 ns (10 MHz)
-    clock = Clock(dut.clk, 100, unit="ns")
+    clock = Clock(dut.clk, 100, units="ns")
     cocotb.start_soon(clock.start())
 
     # Reset
