@@ -8,7 +8,7 @@ from cocotb.triggers import ClockCycles
 from cocotb.types import Logic
 from cocotb.types import LogicArray
 from cocotb.utils import get_sim_time
-from cocotb.triggers import ValueChange
+from cocotb.triggers import Edge
 from cocotb.triggers import Timer
 
 async def await_half_sclk(dut):
@@ -187,14 +187,14 @@ async def test_pwm_freq(dut):
 async def high_edge (uo_out):
 
     while True:
-        await ValueChange(uo_out)
+        await Edge(uo_out)
         if (uo_out.value):
             return
         
 
 async def low_edge (uo_out):
     while True:
-        await ValueChange(uo_out)
+        await Edge(uo_out)
         if ~(uo_out.value):
             return
 
