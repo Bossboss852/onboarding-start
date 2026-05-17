@@ -227,16 +227,11 @@ async def test_pwm_duty(dut):
     ui_in_val = await send_spi_transaction(dut, 1, 0x04, 0xFF)
     ui_in_val = await send_spi_transaction(dut, 1, 0x00, 0xFF)
     await send_spi_transaction(dut, 1, 0x02, 0xFF)
-    await Timer(0.333,'ms')
-    assert int(dut.uo_out.value) == 0xFF, f"Expected to be high, was instead {dut.uo_out.value}"
-    await Timer(0.333,'ms')
-    assert int(dut.uo_out.value) == 0xFF, f"Expected to be high, was instead {dut.uo_out.value}"
-    await Timer(0.333,'ms')
-    assert int(dut.uo_out.value) == 0xFF, f"Expected to be high, was instead {dut.uo_out.value}"
-    await Timer(0.333,'ms')
-    assert int(dut.uo_out.value) == 0xFF, f"Expected to be high, was instead {dut.uo_out.value}"
-    await Timer(0.333,'ms')
-    assert int(dut.uo_out.value) == 0xFF, f"Expected to be high, was instead {dut.uo_out.value}"
+
+    for i in range(30):
+        await Timer(0.333,'ms')
+        assert int(dut.uo_out.value) == 0xFF, f"Expected to be high, was instead {dut.uo_out.value}"
+    
     await ClockCycles(dut.clk, 15000)
     await send_spi_transaction(dut,1,0x04, 0x7F)
     await high_edge(dut.uo_out)
@@ -251,15 +246,9 @@ async def test_pwm_duty(dut):
     assert (Modulation >= 0.45) and (Modulation <= 0.55), f"Failed to be within 50% bounds, was instead {Modulation}"
     await ClockCycles(dut.clk,15000)
     await send_spi_transaction(dut, 1, 0x04, 0x00)
-    assert int(dut.uo_out.value) == 0x00, f"Expected to be low, was instead {dut.uo_out.value}"
-    await Timer(0.333, 'ms')
-    assert int(dut.uo_out.value) == 0x00, f"Expected to be low, was instead {dut.uo_out.value}"
-    await Timer(0.333, 'ms')
-    assert int(dut.uo_out.value) == 0x00, f"Expected to be low, was instead {dut.uo_out.value}"
-    await Timer(0.333, 'ms')
-    assert int(dut.uo_out.value) == 0x00, f"Expected to be low, was instead {dut.uo_out.value}"
-    await Timer(0.333, 'ms')
-    assert int(dut.uo_out.value) == 0x00, f"Expected to be low, was instead {dut.uo_out.value}"
-    await Timer(0.333, 'ms')
+
+    for i in range(30):
+        assert int(dut.uo_out.value) == 0x00, f"Expected to be low, was instead {dut.uo_out.value}"
+        await Timer(0.333, 'ms')
 
     dut._log.info("PWM Duty Cycle test completed successfully")
